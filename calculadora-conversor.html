@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel · Calculadora & Conversores</title>
+<style>
+  :root{
+    --bg:#161513;
+    --panel:#211f1c;
+    --panel-2:#2a2723;
+    --bezel:#0d0c0b;
+    --screen:#d7e4c9;
+    --screen-dim:#8fa07d;
+    --ink:#efe9df;
+    --ink-dim:#a39b8d;
+    --amber:#e8a13a;
+    --amber-dim:#8a6221;
+    --rule:#3a3630;
+    --danger:#c9563f;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 20% -10%, #2a2621 0%, transparent 55%),
+      radial-gradient(ellipse at 100% 110%, #1c1a17 0%, transparent 50%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Courier New', ui-monospace, Menlo, monospace;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    min-height:100vh;
+  }
+
+  .unit{
+    width:100%;
+    max-width:460px;
+    background:linear-gradient(180deg,var(--panel) 0%, var(--panel-2) 100%);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.04) inset,
+      0 30px 60px -20px rgba(0,0,0,0.7),
+      0 0 0 1px var(--bezel);
+    position:relative;
+  }
+
+  .unit::before{
+    content:"";
+    position:absolute;
+    top:8px;left:8px;right:8px;bottom:8px;
+    border:1px solid rgba(255,255,255,0.03);
+    border-radius:13px;
+    pointer-events:none;
+  }
+
+  .plate{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    padding:2px 6px 14px;
+    border-bottom:1px solid var(--rule);
+    margin-bottom:14px;
+  }
+  .plate .model{
+    font-size:11px;
+    letter-spacing:0.28em;
+    color:var(--ink-dim);
+    text-transform:uppercase;
+  }
+  .plate .brand{
+    font-size:13px;
+    letter-spacing:0.14em;
+    color:var(--amber);
+    font-weight:bold;
+  }
+
+  .tabs{
+    display:flex;
+    gap:6px;
+    background:var(--bezel);
+    padding:5px;
+    border-radius:10px;
+    margin-bottom:14px;
+  }
+  .tab{
+    flex:1;
+    text-align:center;
+    padding:9px 4px;
+    font-size:11px;
+    letter-spacing:0.09em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+    background:transparent;
+    border:none;
+    border-radius:7px;
+    cursor:pointer;
+    font-family:inherit;
+    transition:background .15s,color .15s;
+  }
+  .tab.active{
+    background:linear-gradient(180deg,#3a352c,#302c25);
+    color:var(--amber);
+    box-shadow:0 1px 0 rgba(255,255,255,0.06) inset, 0 2px 6px rgba(0,0,0,0.4);
+  }
+
+  .screen{
+    background:linear-gradient(180deg,#1a2417,#141d10);
+    border-radius:9px;
+    padding:16px;
+    box-shadow:
+      inset 0 2px 10px rgba(0,0,0,0.6),
+      inset 0 0 0 1px rgba(0,0,0,0.5);
+    margin-bottom:14px;
+    min-height:78px;
+  }
+  .screen .sub{
+    font-size:11px;
+    color:var(--screen-dim);
+    letter-spacing:0.05em;
+    min-height:16px;
+    word-break:break-all;
+  }
+  .screen .main{
+    font-size:32px;
+    color:var(--screen);
+    text-align:right;
+    letter-spacing:0.02em;
+    word-break:break-all;
+    text-shadow:0 0 6px rgba(183,213,176,0.35);
+    line-height:1.15;
+    margin-top:4px;
+  }
+
+  .pane{display:none;}
+  .pane.active{display:block;}
+
+  /* --- Calculadora --- */
+  .keys{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+  }
+  .key{
+    padding:16px 0;
+    font-size:16px;
+    border-radius:9px;
+    border:none;
+    cursor:pointer;
+    font-family:inherit;
+    background:linear-gradient(180deg,#332f28,#28251f);
+    color:var(--ink);
+    box-shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 3px 0 rgba(0,0,0,0.35);
+    transition:transform .06s, box-shadow .06s;
+  }
+  .key:active{
+    transform:translateY(2px);
+    box-shadow:0 1px 0 rgba(255,255,255,0.05) inset, 0 1px 0 rgba(0,0,0,0.35);
+  }
+  .key.op{background:linear-gradient(180deg,#4a3520,#3a2916); color:var(--amber);}
+  .key.fn{background:linear-gradient(180deg,#3a2622,#2c1c19); color:var(--danger);}
+  .key.eq{
+    background:linear-gradient(180deg,var(--amber),#c17f24);
+    color:#211f1c;
+    font-weight:bold;
+    grid-column:span 2;
+  }
+  .key.zero{grid-column:span 2;}
+
+  /* --- Conversores comunes --- */
+  .field-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .field{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .field label{
+    font-size:10px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+  }
+  .field select, .field input{
+    background:var(--bezel);
+    border:1px solid var(--rule);
+    color:var(--ink);
+    padding:10px;
+    border-radius:7px;
+    font-family:inherit;
+    font-size:14px;
+    outline:none;
+  }
+  .field select:focus, .field input:focus{
+    border-color:var(--amber);
+  }
+  .swap-row{
+    display:flex;
+    justify-content:center;
+    margin:-4px 0 12px;
+  }
+  .swap{
+    background:var(--panel-2);
+    border:1px solid var(--rule);
+    color:var(--amber);
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:15px;
+    line-height:1;
+  }
+  .group-select{
+    margin-bottom:12px;
+  }
+  .group-select select{
+    width:100%;
+    background:var(--bezel);
+    border:1px solid var(--rule);
+    color:var(--amber);
+    padding:10px;
+    border-radius:7px;
+    font-family:inherit;
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  .note{
+    font-size:10px;
+    color:var(--ink-dim);
+    text-align:center;
+    letter-spacing:0.03em;
+    margin-top:2px;
+  }
+
+  .led{
+    display:inline-block;
+    width:6px;height:6px;
+    border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 5px var(--amber);
+    margin-right:6px;
+    vertical-align:middle;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .key{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="unit">
+  <div class="plate">
+    <span class="brand"><span class="led"></span>PANEL-3</span>
+    <span class="model">CALC · FX · UNITS</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="calc">Calc</button>
+    <button class="tab" data-tab="fx">Monedas</button>
+    <button class="tab" data-tab="units">Medidas</button>
+  </div>
+
+  <!-- CALCULADORA -->
+  <div class="pane active" id="pane-calc">
+    <div class="screen">
+      <div class="sub" id="calc-sub">&nbsp;</div>
+      <div class="main" id="calc-main">0</div>
+    </div>
+    <div class="keys" id="calc-keys">
+      <button class="key fn" data-k="clear">C</button>
+      <button class="key fn" data-k="back">⌫</button>
+      <button class="key fn" data-k="percent">%</button>
+      <button class="key op" data-k="/">÷</button>
+
+      <button class="key" data-k="7">7</button>
+      <button class="key" data-k="8">8</button>
+      <button class="key" data-k="9">9</button>
+      <button class="key op" data-k="*">×</button>
+
+      <button class="key" data-k="4">4</button>
+      <button class="key" data-k="5">5</button>
+      <button class="key" data-k="6">6</button>
+      <button class="key op" data-k="-">−</button>
+
+      <button class="key" data-k="1">1</button>
+      <button class="key" data-k="2">2</button>
+      <button class="key" data-k="3">3</button>
+      <button class="key op" data-k="+">+</button>
+
+      <button class="key zero" data-k="0">0</button>
+      <button class="key" data-k=".">.</button>
+      <button class="key eq" data-k="=">=</button>
+    </div>
+  </div>
+
+  <!-- MONEDAS -->
+  <div class="pane" id="pane-fx">
+    <div class="screen">
+      <div class="sub" id="fx-sub">Tasas de referencia fijas</div>
+      <div class="main" id="fx-result">0.00</div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Cantidad</label>
+        <input type="number" id="fx-amount" value="1" step="any" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>De</label>
+        <select id="fx-from"></select>
+      </div>
+      <div class="field">
+        <label>A</label>
+        <select id="fx-to"></select>
+      </div>
+    </div>
+
+    <div class="swap-row">
+      <button class="swap" id="fx-swap" title="Invertir">⇅</button>
+    </div>
+
+    <div class="note">Tasas orientativas fijas para uso offline · no reflejan mercado en vivo</div>
+  </div>
+
+  <!-- MEDIDAS -->
+  <div class="pane" id="pane-units">
+    <div class="screen">
+      <div class="sub" id="u-sub">&nbsp;</div>
+      <div class="main" id="u-result">0</div>
+    </div>
+
+    <div class="group-select">
+      <select id="u-category"></select>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Cantidad</label>
+        <input type="number" id="u-amount" value="1" step="any" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>De</label>
+        <select id="u-from"></select>
+      </div>
+      <div class="field">
+        <label>A</label>
+        <select id="u-to"></select>
+      </div>
+    </div>
+
+    <div class="swap-row">
+      <button class="swap" id="u-swap" title="Invertir">⇅</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var tabs = document.querySelectorAll(".tab");
+  var panes = { calc:document.getElementById("pane-calc"), fx:document.getElementById("pane-fx"), units:document.getElementById("pane-units") };
+  tabs.forEach(function(t){
+    t.addEventListener("click", function(){
+      tabs.forEach(function(x){ x.classList.remove("active"); });
+      t.classList.add("active");
+      Object.keys(panes).forEach(function(k){ panes[k].classList.remove("active"); });
+      panes[t.dataset.tab].classList.add("active");
+    });
+  });
+
+  var calcMain = document.getElementById("calc-main");
+  var calcSub = document.getElementById("calc-sub");
+  var state = { display:"0", prev:null, op:null, resetNext:false, expr:"" };
+
+  function fmt(n){
+    if (!isFinite(n)) return "Error";
+    var s = String(Math.round(n * 1e10) / 1e10);
+    if (s.length > 16) s = Number(n).toExponential(6);
+    return s;
+  }
+
+  function render(){
+    calcMain.textContent = state.display;
+    calcSub.textContent = state.expr || "\u00A0";
+  }
+
+  function inputDigit(d){
+    if (state.resetNext){
+      state.display = (d === ".") ? "0." : d;
+      state.resetNext = false;
+      return;
+    }
+    if (d === "."){
+      if (state.display.indexOf(".") !== -1) return;
+      state.display += ".";
+      return;
+    }
+    if (state.display === "0") state.display = d;
+    else state.display += d;
+  }
+
+  function applyOp(a,b,op){
+    switch(op){
+      case "+": return a+b;
+      case "-": return a-b;
+      case "*": return a*b;
+      case "/": return b === 0 ? NaN : a/b;
+      default: return b;
+    }
+  }
+
+  function pressOp(op){
+    var cur = parseFloat(state.display);
+    if (state.op && !state.resetNext){
+      var result = applyOp(state.prev, cur, state.op);
+      state.prev = result;
+      state.display = fmt(result);
+    } else {
+      state.prev = cur;
+    }
+    state.op = op;
+    state.resetNext = true;
+    var opSym = {"+":"+","-":"−","*":"×","/":"÷"}[op];
+    state.expr = fmt(state.prev) + " " + opSym;
+  }
+
+  function pressEquals(){
+    if (state.op === null) return;
+    var cur = parseFloat(state.display);
+    var result = applyOp(state.prev, cur, state.op);
+    state.expr = fmt(state.prev) + " " + {"+":"+","-":"−","*":"×","/":"÷"}[state.op] + " " + fmt(cur) + " =";
+    state.display = fmt(result);
+    state.prev = null;
+    state.op = null;
+    state.resetNext = true;
+  }
+
+  function pressClear(){
+    state = { display:"0", prev:null, op:null, resetNext:false, expr:"" };
+  }
+
+  function pressBack(){
+    if (state.resetNext) return;
+    if (state.display.length <= 1){ state.display = "0"; return; }
+    state.display = state.display.slice(0,-1);
+    if (state.display === "" || state.display === "-") state.display = "0";
+  }
+
+  function pressPercent(){
+    var cur = parseFloat(state.display);
+    state.display = fmt(cur/100);
+  }
+
+  document.getElementById("calc-keys").addEventListener("click", function(e){
+    var btn = e.target.closest(".key");
+    if (!btn) return;
+    var k = btn.dataset.k;
+    if (/^[0-9]$/.test(k)) inputDigit(k);
+    else if (k === ".") inputDigit(".");
+    else if (["+","-","*","/"].indexOf(k) !== -1) pressOp(k);
+    else if (k === "=") pressEquals();
+    else if (k === "clear") pressClear();
+    else if (k === "back") pressBack();
+    else if (k === "percent") pressPercent();
+    render();
+  });
+
+  document.addEventListener("keydown", function(e){
+    if (!panes.calc.classList.contains("active")) return;
+    var k = e.key;
+    if (/^[0-9]$/.test(k)) { inputDigit(k); render(); }
+    else if (k === ".") { inputDigit("."); render(); }
+    else if (["+","-","*","/"].indexOf(k) !== -1) { pressOp(k); render(); }
+    else if (k === "Enter" || k === "=") { pressEquals(); render(); }
+    else if (k === "Backspace") { pressBack(); render(); }
+    else if (k === "Escape") { pressClear(); render(); }
+  });
+
+  render();
+
+  var fxRates = {
+    "USD": { label:"Dólar estadounidense", rate:1 },
+    "EUR": { label:"Euro", rate:0.92 },
+    "GBP": { label:"Libra esterlina", rate:0.78 },
+    "JPY": { label:"Yen japonés", rate:157.0 },
+    "PEN": { label:"Sol peruano", rate:3.75 },
+    "MXN": { label:"Peso mexicano", rate:18.3 },
+    "ARS": { label:"Peso argentino", rate:915.0 },
+    "COP": { label:"Peso colombiano", rate:4100.0 },
+    "CLP": { label:"Peso chileno", rate:945.0 },
+    "BRL": { label:"Real brasileño", rate:5.55 },
+    "CNY": { label:"Yuan chino", rate:7.25 },
+    "CAD": { label:"Dólar canadiense", rate:1.37 },
+    "CHF": { label:"Franco suizo", rate:0.88 }
+  };
+
+  var fxFrom = document.getElementById("fx-from");
+  var fxTo = document.getElementById("fx-to");
+  var fxAmount = document.getElementById("fx-amount");
+  var fxResult = document.getElementById("fx-result");
+  var fxSub = document.getElementById("fx-sub");
+
+  Object.keys(fxRates).forEach(function(code){
+    var o1 = document.createElement("option");
+    o1.value = code; o1.textContent = code + " · " + fxRates[code].label;
+    fxFrom.appendChild(o1);
+    var o2 = o1.cloneNode(true);
+    fxTo.appendChild(o2);
+  });
+  fxFrom.value = "USD";
+  fxTo.value = "PEN";
+
+  function calcFx(){
+    var amt = parseFloat(fxAmount.value);
+    if (isNaN(amt)) { fxResult.textContent = "0.00"; fxSub.textContent = "Ingresa una cantidad"; return; }
+    var from = fxRates[fxFrom.value];
+    var to = fxRates[fxTo.value];
+    var usd = amt / from.rate;
+    var out = usd * to.rate;
+    fxResult.textContent = out.toLocaleString("es", {maximumFractionDigits:4});
+    fxSub.textContent = amt.toLocaleString("es") + " " + fxFrom.value + " =";
+  }
+
+  [fxAmount, fxFrom, fxTo].forEach(function(el){ el.addEventListener("input", calcFx); });
+  document.getElementById("fx-swap").addEventListener("click", function(){
+    var tmp = fxFrom.value; fxFrom.value = fxTo.value; fxTo.value = tmp;
+    calcFx();
+  });
+  calcFx();
+
+  var unitCategories = {
+    length: {
+      label:"Longitud",
+      base:"m",
+      units:{
+        m:{label:"Metros", f:1},
+        km:{label:"Kilómetros", f:1000},
+        cm:{label:"Centímetros", f:0.01},
+        mm:{label:"Milímetros", f:0.001},
+        mi:{label:"Millas", f:1609.344},
+        yd:{label:"Yardas", f:0.9144},
+        ft:{label:"Pies", f:0.3048},
+        in:{label:"Pulgadas", f:0.0254}
+      }
+    },
+    weight: {
+      label:"Peso / Masa",
+      base:"kg",
+      units:{
+        kg:{label:"Kilogramos", f:1},
+        g:{label:"Gramos", f:0.001},
+        mg:{label:"Miligramos", f:0.000001},
+        lb:{label:"Libras", f:0.45359237},
+        oz:{label:"Onzas", f:0.0283495231},
+        ton:{label:"Toneladas", f:1000}
+      }
+    },
+    volume: {
+      label:"Volumen",
+      base:"l",
+      units:{
+        l:{label:"Litros", f:1},
+        ml:{label:"Mililitros", f:0.001},
+        gal:{label:"Galones (US)", f:3.785411784},
+        qt:{label:"Cuartos (US)", f:0.946352946},
+        pt:{label:"Pintas (US)", f:0.473176473},
+        cup:{label:"Tazas (US)", f:0.2365882365}
+      }
+    },
+    temp: {
+      label:"Temperatura",
+      base:"c",
+      units:{
+        c:{label:"Celsius"},
+        f:{label:"Fahrenheit"},
+        k:{label:"Kelvin"}
+      }
+    },
+    speed: {
+      label:"Velocidad",
+      base:"kmh",
+      units:{
+        kmh:{label:"Km/h", f:1},
+        mph:{label:"Millas/h", f:1.609344},
+        ms:{label:"m/s", f:3.6},
+        knot:{label:"Nudos", f:1.852}
+      }
+    },
+    area: {
+      label:"Área",
+      base:"m2",
+      units:{
+        m2:{label:"Metros²", f:1},
+        km2:{label:"Kilómetros²", f:1000000},
+        ha:{label:"Hectáreas", f:10000},
+        ft2:{label:"Pies²", f:0.09290304},
+        acre:{label:"Acres", f:4046.8564224}
+      }
+    }
+  };
+
+  var uCategory = document.getElementById("u-category");
+  var uFrom = document.getElementById("u-from");
+  var uTo = document.getElementById("u-to");
+  var uAmount = document.getElementById("u-amount");
+  var uResult = document.getElementById("u-result");
+  var uSub = document.getElementById("u-sub");
+
+  Object.keys(unitCategories).forEach(function(key){
+    var o = document.createElement("option");
+    o.value = key; o.textContent = unitCategories[key].label;
+    uCategory.appendChild(o);
+  });
+
+  function populateUnitSelects(){
+    var cat = unitCategories[uCategory.value];
+    uFrom.innerHTML = "";
+    uTo.innerHTML = "";
+    Object.keys(cat.units).forEach(function(code){
+      var o1 = document.createElement("option");
+      o1.value = code; o1.textContent = cat.units[code].label;
+      uFrom.appendChild(o1);
+      var o2 = o1.cloneNode(true);
+      uTo.appendChild(o2);
+    });
+    var keys = Object.keys(cat.units);
+    uFrom.value = keys[0];
+    uTo.value = keys[1] || keys[0];
+  }
+
+  function convertTemp(value, from, to){
+    var c;
+    if (from === "c") c = value;
+    else if (from === "f") c = (value - 32) * 5/9;
+    else c = value - 273.15;
+
+    if (to === "c") return c;
+    if (to === "f") return c * 9/5 + 32;
+    return c + 273.15;
+  }
+
+  function calcUnits(){
+    var cat = unitCategories[uCategory.value];
+    var amt = parseFloat(uAmount.value);
+    if (isNaN(amt)) { uResult.textContent = "0"; uSub.textContent = "Ingresa una cantidad"; return; }
+
+    var out;
+    if (uCategory.value === "temp"){
+      out = convertTemp(amt, uFrom.value, uTo.value);
+    } else {
+      var fromUnit = cat.units[uFrom.value];
+      var toUnit = cat.units[uTo.value];
+      var base = amt * fromUnit.f;
+      out = base / toUnit.f;
+    }
+    uResult.textContent = out.toLocaleString("es", {maximumFractionDigits:6});
+    uSub.textContent = amt.toLocaleString("es") + " " + cat.units[uFrom.value].label + " =";
+  }
+
+  uCategory.addEventListener("change", function(){ populateUnitSelects(); calcUnits(); });
+  [uAmount, uFrom, uTo].forEach(function(el){ el.addEventListener("input", calcUnits); });
+  document.getElementById("u-swap").addEventListener("click", function(){
+    var tmp = uFrom.value; uFrom.value = uTo.value; uTo.value = tmp;
+    calcUnits();
+  });
+
+  populateUnitSelects();
+  calcUnits();
+
+})();
+</script>
+</body>
+</html>
