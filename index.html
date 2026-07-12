@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel · Calculadora & Conversores</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="unit">
+  <div class="plate">
+    <span class="brand"><span class="led"></span>PANEL-3</span>
+    <span class="model">CALC · FX · UNITS</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="calc">Calc</button>
+    <button class="tab" data-tab="fx">Monedas</button>
+    <button class="tab" data-tab="units">Medidas</button>
+  </div>
+
+  <!-- CALCULADORA -->
+  <div class="pane active" id="pane-calc">
+    <div class="screen">
+      <div class="sub" id="calc-sub">&nbsp;</div>
+      <div class="main" id="calc-main">0</div>
+    </div>
+    <div class="keys" id="calc-keys">
+      <button class="key fn" data-k="clear">C</button>
+      <button class="key fn" data-k="back">⌫</button>
+      <button class="key fn" data-k="percent">%</button>
+      <button class="key op" data-k="/">÷</button>
+
+      <button class="key" data-k="7">7</button>
+      <button class="key" data-k="8">8</button>
+      <button class="key" data-k="9">9</button>
+      <button class="key op" data-k="*">×</button>
+
+      <button class="key" data-k="4">4</button>
+      <button class="key" data-k="5">5</button>
+      <button class="key" data-k="6">6</button>
+      <button class="key op" data-k="-">−</button>
+
+      <button class="key" data-k="1">1</button>
+      <button class="key" data-k="2">2</button>
+      <button class="key" data-k="3">3</button>
+      <button class="key op" data-k="+">+</button>
+
+      <button class="key zero" data-k="0">0</button>
+      <button class="key" data-k=".">.</button>
+      <button class="key eq" data-k="=">=</button>
+    </div>
+  </div>
+
+  <!-- MONEDAS -->
+  <div class="pane" id="pane-fx">
+    <div class="screen">
+      <div class="sub" id="fx-sub">Tasas de referencia fijas</div>
+      <div class="main" id="fx-result">0.00</div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Cantidad</label>
+        <input type="number" id="fx-amount" value="1" step="any" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>De</label>
+        <select id="fx-from"></select>
+      </div>
+      <div class="field">
+        <label>A</label>
+        <select id="fx-to"></select>
+      </div>
+    </div>
+
+    <div class="swap-row">
+      <button class="swap" id="fx-swap" title="Invertir">⇅</button>
+    </div>
+
+    <div class="note">Tasas orientativas fijas para uso offline · no reflejan mercado en vivo</div>
+  </div>
+
+  <!-- MEDIDAS -->
+  <div class="pane" id="pane-units">
+    <div class="screen">
+      <div class="sub" id="u-sub">&nbsp;</div>
+      <div class="main" id="u-result">0</div>
+    </div>
+
+    <div class="group-select">
+      <select id="u-category"></select>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Cantidad</label>
+        <input type="number" id="u-amount" value="1" step="any" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>De</label>
+        <select id="u-from"></select>
+      </div>
+      <div class="field">
+        <label>A</label>
+        <select id="u-to"></select>
+      </div>
+    </div>
+
+    <div class="swap-row">
+      <button class="swap" id="u-swap" title="Invertir">⇅</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
