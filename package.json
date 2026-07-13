@@ -1,0 +1,12 @@
+{
+  "name": "qa-cosapi-panel-tests",
+  "version": "1.0.0",
+  "description": "Pruebas unitarias del panel Calculadora & Conversores - Curso Construcción de Software",
+  "main": "calculadora-logic.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
