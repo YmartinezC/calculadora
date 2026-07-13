@@ -1,32 +1,58 @@
+<div align="center">
+
 # 🧮 Panel de Calculadora & Conversores
 
-Aplicación web que integra tres herramientas de cálculo en una sola interfaz: **calculadora aritmética**, **conversor de monedas** y **conversor de medidas**.
+### Calculadora aritmética · Conversor de monedas · Conversor de medidas
 
-Proyecto desarrollado para la asignatura **Construcción de Software (ASUC00947)** — Universidad Continental.
+*Una sola interfaz, tres herramientas de cálculo esenciales*
 
-![Tests](https://img.shields.io/badge/tests-18%2F18%20passing-brightgreen)
-![Docker](https://img.shields.io/badge/docker-pendiente-lightgrey)
-![Git](https://img.shields.io/badge/git-main%20%2B%20develop-blue)
+![Tests](https://img.shields.io/badge/tests-18%2F18%20passing-brightgreen?style=for-the-badge)
+![Coverage](https://img.shields.io/badge/cobertura%20l%C3%B3gica-100%25-brightgreen?style=for-the-badge)
+![Docker](https://img.shields.io/badge/docker-en%20progreso-yellow?style=for-the-badge)
+![Git](https://img.shields.io/badge/gitflow-main%20%2B%20develop-blue?style=for-the-badge)
+
+**Universidad Continental** · Construcción de Software (ASUC00947)
+
+</div>
 
 ---
 
-## 📋 Descripción del proyecto
+## 🎯 Sobre el proyecto
 
-Este proyecto nace de la necesidad de contar con una herramienta rápida y accesible desde el navegador para realizar operaciones aritméticas, conversión de divisas y conversión de unidades de medida, sin depender de aplicaciones externas ni conexión permanente a internet.
+¿Cuántas veces abriste 3 pestañas distintas para hacer una cuenta, convertir soles a dólares, y pasar kilómetros a millas? Este proyecto resuelve exactamente eso: **una sola interfaz web, sin instalaciones, sin depender de internet una vez cargada, y con la lógica de cálculo validada mediante pruebas automatizadas.**
 
 ## ✨ Funcionalidades
 
-- **🔢 Calculadora** — operaciones aritméticas básicas (suma, resta, multiplicación, división, porcentaje)
-- **💱 Conversor de Monedas** — conversión entre 13 divisas usando tasas de referencia
-- **📏 Conversor de Medidas** — longitud, peso, volumen, temperatura y velocidad
+<table>
+<tr>
+<td width="33%" valign="top">
 
-## 🛠️ Tecnologías
+### 🔢 Calculadora
+Operaciones aritméticas básicas con soporte para decimales, porcentaje y corrección de dígitos.
 
-| Categoría | Herramienta |
+</td>
+<td width="33%" valign="top">
+
+### 💱 Conversor de Monedas
+13 divisas internacionales (USD, EUR, PEN, GBP, JPY y más) con conversión bidireccional instantánea.
+
+</td>
+<td width="33%" valign="top">
+
+### 📏 Conversor de Medidas
+6 categorías: longitud, peso, volumen, temperatura, velocidad y área.
+
+</td>
+</tr>
+</table>
+
+## 🛠️ Stack tecnológico
+
+| Capa | Tecnología |
 |---|---|
-| Frontend | HTML5, CSS3, JavaScript (vanilla) |
-| Testing | Jest sobre Node.js |
-| Control de versiones | Git + GitHub (ramas `main` / `develop`) |
-| Contenerización | Docker |
+| **Interfaz** | HTML5 · CSS3 · JavaScript (ES6, vanilla — sin frameworks) |
+| **Pruebas** | Jest sobre Node.js |
+| **Control de versiones** | Git + GitHub · flujo `main` / `develop` |
+| **Contenerización** | Docker *(en progreso)* |
 
-## 📂 Estructura del proyecto
+## 📂 Arquitectura del proyecto
