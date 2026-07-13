@@ -8,7 +8,7 @@
 
 ![Tests](https://img.shields.io/badge/tests-18%2F18%20passing-brightgreen?style=for-the-badge)
 ![Coverage](https://img.shields.io/badge/cobertura%20l%C3%B3gica-100%25-brightgreen?style=for-the-badge)
-![Docker](https://img.shields.io/badge/docker-en%20progreso-yellow?style=for-the-badge)
+![Docker](https://img.shields.io/badge/docker-100%25-yellow?style=for-the-badge)
 ![Git](https://img.shields.io/badge/gitflow-main%20%2B%20develop-blue?style=for-the-badge)
 
 **Universidad Continental** · Construcción de Software (ASUC00947)
