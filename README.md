@@ -53,6 +53,6 @@ Operaciones aritméticas básicas con soporte para decimales, porcentaje y corre
 | **Interfaz** | HTML5 · CSS3 · JavaScript (ES6, vanilla — sin frameworks) |
 | **Pruebas** | Jest sobre Node.js |
 | **Control de versiones** | Git + GitHub · flujo `main` / `develop` |
-| **Contenerización** | Docker *(en progreso)* |
+| **Contenerización** | Docker *(100%)* |
 
 ## 📂 Arquitectura del proyecto
